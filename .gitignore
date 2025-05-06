@@ -1,4 +1,67 @@
+# Dependency directories
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Environment variables
 .env
-soulheads-firebase-adminsdk-fbsvc-62da09beab.json
-node_modules
-package-lock.json
+.env.local
+.env.*.local
+
+# Firebase service account
+*firebase-adminsdk*.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Build outputs
+dist/
+build/
+client/build/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# IDE-specific
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# SSL certificates
+*.pem
+*.crt
+*.key
+nginx/certbot/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Docker volumes (except sample data)
+data/mongodb/*
+!data/mongodb/.gitkeep
+
+# Upload directories
+uploads/*
+!uploads/.gitkeep

@@ -85,7 +85,7 @@ router.post(
           sneakerName,
           brandName,
           minPrice: price ? Number(price) : 0,
-          maxPrice: price ? Number(price) : 0
+          maxPrice: price ? Number(price) : 0,
         });
         await sneaker.save();
       }
@@ -129,7 +129,7 @@ router.post(
       // Update user's sneaker count if this is a new sneaker they've posted
       const userSneakerCount = await Post.distinct("sneakerId", {
         userId: req.user._id,
-      }).countDocuments();
+      }).length;
       await User.findByIdAndUpdate(req.user._id, {
         totalSneakerCount: userSneakerCount,
       });
@@ -366,11 +366,11 @@ router.delete("/:id", authenticate, async (req, res) => {
     await Post.findByIdAndDelete(req.params.id);
 
     // Update user's sneaker count
-    const userSneakerCount = await Post.distinct("sneakerId", {
+    const userSneakers = await Post.distinct("sneakerId", {
       userId: req.user._id,
-    }).countDocuments();
+    });
     await User.findByIdAndUpdate(req.user._id, {
-      totalSneakerCount: userSneakerCount,
+      totalSneakerCount: userSneakers.length,
     });
 
     // Clear caches
