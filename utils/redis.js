@@ -1,4 +1,5 @@
 const Redis = require('ioredis');
+require("dotenv").config();
 
 // Initialize Redis client with Upstash configuration using the connection URL directly
 const initRedisClient = () => {
