@@ -1,0 +1,555 @@
+{
+  "info": {
+    "_postman_id": "e8a23f5c-f76d-4d0e-9db6-c908c9f48a05",
+    "name": "SoulHeads API",
+    "description": "API collection for the SoulHeads sneaker social platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "User authentication and profile management endpoints",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"idToken\": \"{{firebase_id_token}}\",\n    \"username\": \"sneakerhead123\",\n    \"email\": \"user@example.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"idToken\": \"{{firebase_id_token}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"new_username\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Upload Profile Photo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile/photo",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile", "photo"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "profilePhoto",
+                  "type": "file",
+                  "src": "/path/to/profile_image.jpg"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "User-related endpoints (following, profiles, etc)",
+      "item": [
+        {
+          "name": "Get User Profile by Username",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/users/{{username}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{username}}"]
+            }
+          }
+        },
+        {
+          "name": "Follow a User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}/follow",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{user_id}}", "follow"]
+            }
+          }
+        },
+        {
+          "name": "Unfollow a User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}/unfollow",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{user_id}}", "unfollow"]
+            }
+          }
+        },
+        {
+          "name": "Get User Followers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}/followers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{user_id}}", "followers"]
+            }
+          }
+        },
+        {
+          "name": "Get User Following",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}/following",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{user_id}}", "following"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "description": "Post management endpoints",
+      "item": [
+        {
+          "name": "Create Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/posts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "posts"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "mainImage",
+                  "type": "file",
+                  "src": "/path/to/main_image.jpg"
+                },
+                {
+                  "key": "additionalImages",
+                  "type": "file",
+                  "src": "/path/to/additional1.jpg"
+                },
+                {
+                  "key": "additionalImages",
+                  "type": "file",
+                  "src": "/path/to/additional2.jpg"
+                },
+                {
+                  "key": "brandName",
+                  "value": "Nike",
+                  "type": "text"
+                },
+                {
+                  "key": "sneakerName",
+                  "value": "Air Jordan 1 Chicago",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "My new Chicago colorway!",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "250",
+                  "type": "text"
+                },
+                {
+                  "key": "year",
+                  "value": "2022",
+                  "type": "text"
+                },
+                {
+                  "key": "purchaseLink",
+                  "value": "https://nike.com/product/123",
+                  "type": "text"
+                },
+                {
+                  "key": "purchaseAddress",
+                  "value": "Nike Store, NYC",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Posts (Feed)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/posts?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "posts"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Following Posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/posts/following?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "posts", "following"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Post",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/posts/{{post_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "posts", "{{post_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Post",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/posts/{{post_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "posts", "{{post_id}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"description\": \"Updated description\",\n    \"price\": 280,\n    \"purchaseLink\": \"https://updated-link.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Post",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/posts/{{post_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "posts", "{{post_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Like/Unlike Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/posts/{{post_id}}/like",
+              "host": ["{{base_url}}"],
+              "path": ["api", "posts", "{{post_id}}", "like"]
+            }
+          }
+        },
+        {
+          "name": "Get User's Posts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/posts/user/{{user_id}}?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "posts", "user", "{{user_id}}"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sneakers",
+      "description": "Sneaker management endpoints",
+      "item": [
+        {
+          "name": "Get All Sneakers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/sneakers?page=1&limit=20&brand=Nike",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sneakers"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "brand",
+                  "value": "Nike"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Top Rated Sneakers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/sneakers/top?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sneakers", "top"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Sneaker Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/sneakers/{{sneaker_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sneakers", "{{sneaker_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Rate Sneaker",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/sneakers/{{sneaker_id}}/rate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sneakers", "{{sneaker_id}}", "rate"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"rating\": 5\n}"
+            }
+          }
+        },
+        {
+          "name": "Search Sneakers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/sneakers/search/{{search_query}}?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sneakers", "search", "{{search_query}}"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Sneakers by Brand",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/sneakers/brand/{{brand_name}}?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sneakers", "brand", "{{brand_name}}"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "YOUR_FIREBASE_ID_TOKEN",
+      "type": "string"
+    }
+  ]
+}
