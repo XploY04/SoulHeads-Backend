@@ -8,7 +8,6 @@ const { v4: uuidv4 } = require("uuid");
  */
 const verifyFirebaseToken = async (idToken) => {
   try {
-    // Set a reasonable timeout for token verification
     const checkRevoked = true; // Check if token has been revoked
     const decodedToken = await admin
       .auth()
