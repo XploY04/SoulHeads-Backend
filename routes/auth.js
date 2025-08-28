@@ -6,7 +6,6 @@ const {
   verifyFirebaseToken,
   uploadToFirebaseStorage,
 } = require("../utils/firebase");
-const { setCache, deleteCache, cacheKeys } = require("../utils/redis");
 const multer = require("multer");
 const cloudinary = require("../utils/cloudinary");
 const { uploadToCloudinary } = require("../utils/cloudinary");

@@ -1,11 +1,126 @@
 {
   "info": {
     "_postman_id": "e8a23f5c-f76d-4d0e-9db6-c908c9f48a05",
-    "name": "SoulHeads API",
-    "description": "API collection for the SoulHeads sneaker social platform",
+    "name": "SoulHeads API - Complete Backend",
+    "description": "Complete API collection for the SoulHeads sneaker social platform backend. Built with Express.js, MongoDB, Firebase Auth, and Cloudinary. Redis caching has been removed for simplified deployment - all cache operations are now no-ops.\n\n🔧 DEVELOPMENT TESTING:\nFor easy testing without Firebase tokens, add these headers to any authenticated request:\n• x-dev-bypass: true\n• x-dev-username: {{dev_username}}\n\nExample endpoints already include these headers. Copy them to other requests as needed.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
+    {
+      "name": "Development & Testing",
+      "description": "Development-only endpoints for easier testing without Firebase tokens. Redis has been removed - no cache setup required for development.",
+      "item": [
+        {
+          "name": "Create Test User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/dev/create-user",
+              "host": ["{{base_url}}"],
+              "path": ["api", "dev", "create-user"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser123\",\n    \"email\": \"test@dev.com\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/dev/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "dev", "users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mock Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/dev/mock-login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "dev", "mock-login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cleanup Test Data",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/dev/cleanup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "dev", "cleanup"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Auth with Dev Headers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-dev-bypass",
+                "value": "true"
+              },
+              {
+                "key": "x-dev-username",
+                "value": "{{dev_username}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Server Health",
+      "description": "Basic server health check endpoints",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
     {
       "name": "Authentication",
       "description": "User authentication and profile management endpoints",
@@ -29,7 +144,8 @@
               "mode": "raw",
               "raw": "{\n    \"idToken\": \"{{firebase_id_token}}\",\n    \"username\": \"sneakerhead123\",\n    \"email\": \"user@example.com\"\n}"
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Login User",
@@ -50,7 +166,8 @@
               "mode": "raw",
               "raw": "{\n    \"idToken\": \"{{firebase_id_token}}\"\n}"
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Get User Profile",
@@ -60,6 +177,16 @@
               {
                 "key": "Authorization",
                 "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "x-dev-bypass",
+                "value": "true",
+                "description": "Development mode bypass"
+              },
+              {
+                "key": "x-dev-username",
+                "value": "{{dev_username}}",
+                "description": "Development username for testing"
               }
             ],
             "url": {
@@ -67,7 +194,8 @@
               "host": ["{{base_url}}"],
               "path": ["api", "auth", "profile"]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Update Profile",
@@ -81,6 +209,16 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "x-dev-bypass",
+                "value": "true",
+                "description": "Development mode bypass"
+              },
+              {
+                "key": "x-dev-username",
+                "value": "{{dev_username}}",
+                "description": "Development username for testing"
               }
             ],
             "url": {
@@ -92,7 +230,8 @@
               "mode": "raw",
               "raw": "{\n    \"username\": \"new_username\"\n}"
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Upload Profile Photo",
@@ -102,6 +241,16 @@
               {
                 "key": "Authorization",
                 "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "x-dev-bypass",
+                "value": "true",
+                "description": "Development mode bypass"
+              },
+              {
+                "key": "x-dev-username",
+                "value": "{{dev_username}}",
+                "description": "Development username for testing"
               }
             ],
             "url": {
@@ -119,7 +268,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -136,7 +286,8 @@
               "host": ["{{base_url}}"],
               "path": ["api", "users", "{{username}}"]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Follow a User",
@@ -146,6 +297,16 @@
               {
                 "key": "Authorization",
                 "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "x-dev-bypass",
+                "value": "true",
+                "description": "Development mode bypass"
+              },
+              {
+                "key": "x-dev-username",
+                "value": "{{dev_username}}",
+                "description": "Development username for testing"
               }
             ],
             "url": {
@@ -153,7 +314,8 @@
               "host": ["{{base_url}}"],
               "path": ["api", "users", "{{user_id}}", "follow"]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Unfollow a User",
@@ -163,6 +325,16 @@
               {
                 "key": "Authorization",
                 "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "x-dev-bypass",
+                "value": "true",
+                "description": "Development mode bypass"
+              },
+              {
+                "key": "x-dev-username",
+                "value": "{{dev_username}}",
+                "description": "Development username for testing"
               }
             ],
             "url": {
@@ -170,7 +342,8 @@
               "host": ["{{base_url}}"],
               "path": ["api", "users", "{{user_id}}", "unfollow"]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Get User Followers",
@@ -181,7 +354,8 @@
               "host": ["{{base_url}}"],
               "path": ["api", "users", "{{user_id}}", "followers"]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Get User Following",
@@ -192,7 +366,8 @@
               "host": ["{{base_url}}"],
               "path": ["api", "users", "{{user_id}}", "following"]
             }
-          }
+          },
+          "response": []
         }
       ]
     },
@@ -208,6 +383,16 @@
               {
                 "key": "Authorization",
                 "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "x-dev-bypass",
+                "value": "true",
+                "description": "Development mode bypass"
+              },
+              {
+                "key": "x-dev-username",
+                "value": "{{dev_username}}",
+                "description": "Development username for testing"
               }
             ],
             "url": {
@@ -301,6 +486,16 @@
               {
                 "key": "Authorization",
                 "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "x-dev-bypass",
+                "value": "true",
+                "description": "Development mode bypass"
+              },
+              {
+                "key": "x-dev-username",
+                "value": "{{dev_username}}",
+                "description": "Development username for testing"
               }
             ],
             "url": {
@@ -440,7 +635,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Get Top Rated Sneakers",
@@ -457,7 +653,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Get Sneaker Details",
@@ -468,7 +665,8 @@
               "host": ["{{base_url}}"],
               "path": ["api", "sneakers", "{{sneaker_id}}"]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Rate Sneaker",
@@ -493,7 +691,8 @@
               "mode": "raw",
               "raw": "{\n    \"rating\": 5\n}"
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Search Sneakers",
@@ -514,7 +713,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "Get Sneakers by Brand",
@@ -535,7 +735,8 @@
                 }
               ]
             }
-          }
+          },
+          "response": []
         }
       ]
     }
@@ -549,6 +750,51 @@
     {
       "key": "auth_token",
       "value": "YOUR_FIREBASE_ID_TOKEN",
+      "type": "string"
+    },
+    {
+      "key": "firebase_id_token",
+      "value": "YOUR_FIREBASE_ID_TOKEN_HERE",
+      "type": "string"
+    },
+    {
+      "key": "username",
+      "value": "test_username",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "USER_OBJECT_ID_HERE",
+      "type": "string"
+    },
+    {
+      "key": "post_id",
+      "value": "POST_OBJECT_ID_HERE",
+      "type": "string"
+    },
+    {
+      "key": "sneaker_id",
+      "value": "SNEAKER_OBJECT_ID_HERE",
+      "type": "string"
+    },
+    {
+      "key": "search_query",
+      "value": "jordan",
+      "type": "string"
+    },
+    {
+      "key": "brand_name",
+      "value": "Nike",
+      "type": "string"
+    },
+    {
+      "key": "dev_username",
+      "value": "testuser123",
+      "type": "string"
+    },
+    {
+      "key": "dev_user_id",
+      "value": "DEV_USER_ID_HERE",
       "type": "string"
     }
   ]

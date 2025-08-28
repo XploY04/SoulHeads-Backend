@@ -1,9 +1,22 @@
-const { redisClient } = require("../utils/redis");
-const { errorTypes } = require("../utils/errorHandler");
 const logger = require("../utils/logger");
 
+// In-memory store for rate limiting (since Redis is removed)
+const requestStore = new Map();
+
+// Clean up old entries periodically
+setInterval(() => {
+  const now = Date.now();
+  const cutoff = now - 60 * 60 * 1000; // 1 hour ago
+
+  for (const [key, entry] of requestStore.entries()) {
+    if (entry.firstRequest < cutoff) {
+      requestStore.delete(key);
+    }
+  }
+}, 5 * 60 * 1000); // Clean every 5 minutes
+
 /**
- * Creates a rate limiter middleware
+ * Creates a rate limiter middleware using in-memory storage
  * @param {number} maxRequests - Max number of requests allowed in the window
  * @param {number} windowMs - Time window in milliseconds
  * @param {Object} options - Additional options
@@ -18,19 +31,10 @@ const createRateLimiter = (maxRequests, windowMs, options = {}) => {
     keyGenerator = null,
   } = options;
 
-  // Window in seconds
-  const windowS = Math.ceil(windowMs / 1000);
-
   return async (req, res, next) => {
     try {
       // Skip rate limiting based on method
       if (skipMethods.includes(req.method)) {
-        return next();
-      }
-
-      // Skip if Redis client is unavailable
-      if (!redisClient || !redisClient.isReady) {
-        logger.warn("Rate limiting disabled: Redis client unavailable");
         return next();
       }
 
@@ -41,51 +45,64 @@ const createRateLimiter = (maxRequests, windowMs, options = {}) => {
         ? keyGenerator(req)
         : `${keyPrefix}${ip}:${route}`;
 
-      // Use Redis to track requests
-      const requestCount = await redisClient.incr(key);
+      const now = Date.now();
+      const windowStart = now - windowMs;
 
-      // Set expiry on first request
-      if (requestCount === 1) {
-        await redisClient.expire(key, windowS);
+      // Get or create entry for this key
+      let entry = requestStore.get(key);
+      if (!entry) {
+        entry = { requests: [], firstRequest: now };
+        requestStore.set(key, entry);
       }
+
+      // Remove old requests outside the window
+      entry.requests = entry.requests.filter(
+        (timestamp) => timestamp > windowStart
+      );
 
       // Add rate limit headers
       res.setHeader("X-RateLimit-Limit", maxRequests);
       res.setHeader(
         "X-RateLimit-Remaining",
-        Math.max(0, maxRequests - requestCount)
+        Math.max(0, maxRequests - entry.requests.length)
       );
 
-      // Get TTL for the key
-      const ttl = await redisClient.ttl(key);
-      if (ttl > 0) {
-        res.setHeader("X-RateLimit-Reset", Math.ceil(Date.now() / 1000) + ttl);
+      // Calculate reset time
+      const oldestRequest = entry.requests[0];
+      if (oldestRequest) {
+        const resetTime = Math.ceil((oldestRequest + windowMs) / 1000);
+        res.setHeader("X-RateLimit-Reset", resetTime);
       }
 
-      // If request count exceeds limit, return error
-      if (requestCount > maxRequests) {
-        const retryAfter = ttl > 0 ? ttl : windowS;
+      // Check if limit exceeded
+      if (entry.requests.length >= maxRequests) {
+        const retryAfter = Math.ceil(windowMs / 1000);
         res.setHeader("Retry-After", retryAfter);
 
         if (handler) {
           return handler(req, res, next);
         }
 
-        return next(
-          errorTypes.forbidden(
-            `Too many requests, please try again after ${Math.ceil(
-              retryAfter / 60
-            )} minutes`
-          )
-        );
+        return res.status(429).json({
+          message: `Too many requests, please try again after ${Math.ceil(
+            retryAfter / 60
+          )} minutes`,
+          retryAfter,
+        });
       }
+
+      // Add current request to the list
+      entry.requests.push(now);
 
       // Only count successful responses if configured
       if (skipSuccessfulRequests) {
-        // Decrement counter for successful responses
-        res.on("finish", async () => {
+        // Remove current request for successful responses
+        res.on("finish", () => {
           if (res.statusCode < 400) {
-            await redisClient.decr(key);
+            const index = entry.requests.indexOf(now);
+            if (index > -1) {
+              entry.requests.splice(index, 1);
+            }
           }
         });
       }

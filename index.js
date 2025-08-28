@@ -40,6 +40,12 @@ app.use("/api/users", require("./routes/users"));
 app.use("/api/posts", require("./routes/posts"));
 app.use("/api/sneakers", require("./routes/sneakers"));
 
+// Development routes (only in development mode)
+if (process.env.NODE_ENV === "development") {
+  app.use("/api/dev", require("./routes/dev"));
+  console.log("🔧 Development routes enabled at /api/dev");
+}
+
 // Default route
 app.get("/", (req, res) => {
   res.send("SoulHeads API is running");

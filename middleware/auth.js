@@ -3,9 +3,18 @@ const User = require("../models/User");
 
 /**
  * Authentication middleware using Firebase token verification
+ * Supports development mode bypassing for easier testing
  */
 const authenticate = async (req, res, next) => {
   try {
+    // Development mode bypass
+    if (
+      process.env.NODE_ENV === "development" &&
+      req.headers["x-dev-bypass"] === "true"
+    ) {
+      return handleDevBypass(req, res, next);
+    }
+
     // Check if authorization header exists
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -29,21 +38,17 @@ const authenticate = async (req, res, next) => {
       decodedToken = await verifyFirebaseToken(token);
     } catch (tokenError) {
       if (tokenError.code === "auth/id-token-expired") {
-        return res
-          .status(401)
-          .json({
-            message: "Token has expired, please log in again",
-            code: "TOKEN_EXPIRED",
-          });
+        return res.status(401).json({
+          message: "Token has expired, please log in again",
+          code: "TOKEN_EXPIRED",
+        });
       }
 
       if (tokenError.code === "auth/id-token-revoked") {
-        return res
-          .status(401)
-          .json({
-            message: "Token has been revoked, please log in again",
-            code: "TOKEN_REVOKED",
-          });
+        return res.status(401).json({
+          message: "Token has been revoked, please log in again",
+          code: "TOKEN_REVOKED",
+        });
       }
 
       return res
@@ -74,6 +79,50 @@ const authenticate = async (req, res, next) => {
   } catch (error) {
     console.error("Authentication error:", error);
     res.status(500).json({ message: "Server error during authentication" });
+  }
+};
+
+/**
+ * Development mode bypass function
+ */
+const handleDevBypass = async (req, res, next) => {
+  try {
+    const devUserId = req.headers["x-dev-user-id"];
+    const devUsername = req.headers["x-dev-username"] || "testuser";
+    const devEmail = req.headers["x-dev-email"] || "test@dev.com";
+
+    let user;
+
+    if (devUserId) {
+      user = await User.findById(devUserId);
+    } else {
+      user = await User.findOne({ username: devUsername });
+    }
+
+    // Create user if doesn't exist in dev mode
+    if (!user) {
+      user = new User({
+        username: devUsername,
+        email: devEmail,
+        firebaseUid: `dev-${devUsername}-${Date.now()}`,
+        profilePhoto: "https://via.placeholder.com/150",
+      });
+      await user.save();
+      console.log(`[DEV] Created test user: ${devUsername}`);
+    }
+
+    req.user = user;
+    req.firebaseUser = {
+      uid: user.firebaseUid,
+      email: user.email,
+      name: user.username,
+    };
+
+    console.log(`[DEV] Bypassed auth for user: ${user.username}`);
+    next();
+  } catch (error) {
+    console.error("Development bypass error:", error);
+    res.status(500).json({ message: "Server error during development bypass" });
   }
 };
 

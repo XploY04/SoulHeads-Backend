@@ -16,7 +16,6 @@ SoulHeads is a social media platform built for sneaker enthusiasts to share, rat
 
 - **Backend**: Node.js, Express
 - **Database**: MongoDB
-- **Caching**: Redis (Upstash)
 - **Authentication**: Firebase Authentication
 - **Image Storage**: Cloudinary
 - **Containerization**: Docker
@@ -27,7 +26,6 @@ SoulHeads is a social media platform built for sneaker enthusiasts to share, rat
 
 - Node.js 14+
 - MongoDB
-- Redis
 - Firebase account
 - Cloudinary account
 - Docker and Docker Compose (for containerized deployment)
